@@ -1,0 +1,94 @@
+# create a database "LibraryDB"
+create database LibraryDB;
+use LibraryDB;
+
+# create table "Books"
+create table books 
+(
+id int primary key auto_increment,
+Title varchar(100)not null, 
+Author varchar(50) not null, 
+Published_year YEAR not null, 
+Genre varchar(30)
+);
+DESC books;
+
+# create table "Members"
+create table members
+(
+id int primary key auto_increment,
+Member_Names varchar(50) not null,
+Membership_date date not null
+);
+DESC members;
+
+# create table "Borrowing"
+create table borrowing
+(
+borrowing_id int primary key auto_increment,
+book_id int,member_id int,
+borrow_date DATE not null,
+return_date DATE
+);
+Alter table borrowing add constraint BOOK foreign key (book_id) references books(id);
+Alter table borrowing add constraint members foreign key(member_id) references members(id);
+DESC borrowing;
+SHOW TABLES;
+
+# Insert values into each tables
+
+INSERT INTO books VALUES 
+('To Kill a Mockingbird', 'Harper Lee', 1960, 'Fiction'),
+('1984', 'George Orwell', 1949, 'Dystopian'),
+('Pride and Prejudice', 'Jane Austen', 1813, 'Romance'),
+('The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'Classic'),
+('Moby-Dick', 'Herman Melville', 1851, 'Adventure'),
+('War and Peace', 'Leo Tolstoy', 1869, 'Historical Fiction'),
+('The Catcher in the Rye', 'J.D. Salinger', 1951, 'Coming-of-age'),
+('The Lord of the Rings', 'J.R.R. Tolkien', 1954, 'Fantasy'),
+('The Hobbit', 'J.R.R. Tolkien', 1937, 'Fantasy'),
+('Crime and Punishment', 'Fyodor Dostoevsky', 1866, 'Psychological Fiction');
+SELECT * FROM books;
+
+
+INSERT INTO members VALUES 
+(1, 'Alice Johnson', '2023-01-15'),
+(2, 'Bob Smith', '2023-02-20'),
+(3, 'Catherine Brown', '2023-03-10'),
+(4, 'David Wilson', '2023-04-25'),
+(5, 'Emma Davis', '2023-05-18'),
+(6, 'Frank Thompson', '2023-06-30'),
+(7, 'Grace Lee', '2023-07-15'),
+(8, 'Henry Martin', '2023-08-01'),
+(9, 'Isabella Clark', '2023-09-12'),
+(10, 'Jack Walker', '2023-10-22');
+SELECT * FROM members;
+
+
+INSERT INTO borrowing VALUES 
+(1, 2, '2023-11-01', '2023-11-15'),
+(3, 1, '2023-11-05', '2023-11-20'),
+(5, 4, '2023-11-10', '2023-11-25'),
+(7, 3, '2023-11-12', '2023-11-26'),
+(9, 5, '2023-11-15', '2023-11-30'),
+(2, 6, '2023-11-18', '2023-12-02'),
+(4, 8, '2023-11-20', NULL),
+(6, 7, '2023-11-22', NULL),
+(8, 9, '2023-11-25', '2023-12-05'),
+(10, 10, '2023-11-28', NULL);
+SELECT * FROM borrowing;
+
+/*Queries*/
+# 1. Retrieve the book title,genre of all available books.
+SELECT books.Title,books.Genre FROM books LEFT JOIN borrowing ON books.id = borrowing.book_id WHERE borrowing.return_date IS NOT NULL OR borrowing.book_id IS NULL;
+
+# 2. List the book title and their release year in descending order of release year.
+SELECT Title,Published_year FROM books ORDER BY Published_year DESC;
+
+# 3. Retrieve the book titles and the corresponding member who have borrowed those books.
+SELECT books.Title AS Book_Title,members.Member_Names AS Borrowed_By FROM borrowing INNER JOIN books ON borrowing.book_id = books.id INNER JOIN members ON borrowing.member_id = members.id;
+
+# 4. Display the total count of books in each category.
+SELECT Genre,COUNT(*) AS Total_Books FROM books GROUP BY Genre;
+
+# 5. 
