@@ -1,0 +1,140 @@
+# create a database "EmployeeDB"
+CREATE DATABASE EmployeeDB
+USE Employee
+
+# create a table"Employees"
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    DOB DATE,
+    Gender CHAR(1),
+    Contact VARCHAR(15),
+    Address TEXT,
+    JobRoleID INT,
+    DepartmentID INT,
+    JoiningDate DATE,
+    FOREIGN KEY (JobRoleID) REFERENCES JobRoles(JobRoleID),
+    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID)
+);
+
+# create a table"Departments"
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(100),
+    ManagerID INT,
+    FOREIGN KEY (ManagerID) REFERENCES Employees(EmployeeID)
+);
+
+# create a table"JobRoles"
+CREATE TABLE JobRoles (
+    JobRoleID INT PRIMARY KEY,
+    JobTitle VARCHAR(100),
+    PayGrade VARCHAR(10)
+);
+
+# create a table"Salaries"
+CREATE TABLE Salaries (
+    SalaryID INT PRIMARY KEY,
+    EmployeeID INT,
+    BasePay DECIMAL(10, 2),
+    Allowances DECIMAL(10, 2),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+# create a table"Projects"
+CREATE TABLE Projects (
+    ProjectID INT PRIMARY KEY,
+    ProjectName VARCHAR(100),
+    StartDate DATE,
+    EndDate DATE,
+    Status VARCHAR(20)
+);
+
+# create a table"ProjectAssignments"
+CREATE TABLE ProjectAssignments (
+    AssignmentID INT PRIMARY KEY,
+    EmployeeID INT,
+    ProjectID INT,
+    Role VARCHAR(50),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID),
+    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID)
+);
+
+# create a table"PerformanceReviews"
+CREATE TABLE PerformanceReviews (
+    ReviewID INT PRIMARY KEY,
+    EmployeeID INT,
+    ReviewDate DATE,
+    Rating INT,
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+# create a table"Attendance"
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY,
+    EmployeeID INT,
+    Date DATE,
+    Status CHAR(1), -- P (Present), A (Absent)
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+#INSERT VALUES
+
+INSERT INTO Employees VALUES
+    (1, 'Alice Smith', '1990-01-15', 'F', '555-1234', '123 Main St', 101, 201, '2020-06-01'),
+    (2, 'Bob Johnson', '1985-03-22', 'M', '555-5678', '456 Elm St', 102, 202, '2018-09-15'),
+    (3, 'Charlie Brown', '1992-07-08', 'M', '555-8765', '789 Oak St', 103, 201, '2021-11-01');
+
+INSERT INTO Departments VALUES
+    (201, 'Human Resources', 1),
+    (202, 'IT', 2),
+    (203, 'Finance', NULL);
+
+INSERT INTO JobRoles VALUES
+    (101, 'HR Manager', 'A'),
+    (102, 'Software Engineer', 'B'),
+    (103, 'Financial Analyst', 'B');
+
+INSERT INTO Salaries VALUES
+    (301, 1, 50000, 10000),
+    (302, 2, 60000, 15000),
+    (303, 3, 55000, 12000);
+
+INSERT INTO Projects VALUES
+    (401, 'HR System Development', '2024-01-01', '2024-12-31', 'Ongoing'),
+    (402, 'IT Infrastructure Upgrade', '2023-06-01', '2024-05-31', 'Completed');
+
+INSERT INTO ProjectAssignments VALUES
+    (501, 2, 401, 'Developer'),
+    (502, 3, 402, 'Consultant');
+
+INSERT INTO PerformanceReviews VALUES
+    (601, 1, '2024-06-01', 5),
+    (602, 2, '2024-06-01', 4),
+    (603, 3, '2024-06-01', 4);
+
+INSERT INTO Attendance VALUES
+    (701, 1, '2024-12-01', 'P'),
+    (702, 2, '2024-12-01', 'A'),
+    (703, 3, '2024-12-01', 'P');
+
+/*QUERIES*/
+
+# 1. List all employees in the IT department:
+SELECT E.Name, E.Contact, J.JobTitle
+FROM Employees E
+JOIN Departments D ON E.DepartmentID = D.DepartmentID
+JOIN JobRoles J ON E.JobRoleID = J.JobRoleID
+WHERE D.DepartmentName = 'IT';
+
+# 2. Retrieve salaries of all employees:
+SELECT E.Name, S.BasePay, S.Allowances
+FROM Employees E
+JOIN Salaries S ON E.EmployeeID = S.EmployeeID;
+
+# 3. Show employees assigned to a specific project:
+SELECT E.Name, PA.Role
+FROM Employees E
+JOIN ProjectAssignments PA ON E.EmployeeID = PA.EmployeeID
+WHERE PA.ProjectID = 401;
+
