@@ -1,0 +1,108 @@
+# Create a database as"StudentDB"
+CREATE DATABASE StudentDB
+USE StudentDB
+
+# Create a Table "Student"
+CREATE TABLE Students (
+    StudentID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    DOB DATE,
+    Gender CHAR(1),
+    Contact VARCHAR(15),
+    Address TEXT
+);
+
+# Create a Table "Faculty"
+CREATE TABLE Faculty (
+    FacultyID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Contact VARCHAR(15),
+    Department VARCHAR(50)
+);
+
+# Create a Table "Courses"
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(100),
+    CreditHours INT,
+    FacultyID INT,
+    FOREIGN KEY (FacultyID) REFERENCES Faculty(FacultyID)
+);
+
+# Create a Table "Enrollment"
+CREATE TABLE Enrollment (
+    EnrollmentID INT PRIMARY KEY,
+    StudentID INT,
+    CourseID INT,
+    Semester VARCHAR(20),
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+# Create a Table "Grades"
+CREATE TABLE Grades (
+    GradeID INT PRIMARY KEY,
+    EnrollmentID INT,
+    Grade VARCHAR(2),
+    FOREIGN KEY (EnrollmentID) REFERENCES Enrollment(EnrollmentID)
+);
+
+# Create a Table "Attendance"
+CREATE TABLE Attendance (
+    AttendanceID INT PRIMARY KEY,
+    EnrollmentID INT,
+    Date DATE,
+    Status CHAR(1), -- P (Present), A (Absent)
+    FOREIGN KEY (EnrollmentID) REFERENCES Enrollment(EnrollmentID)
+);
+
+#INSERTING TABLE VALUES
+INSERT INTO Students VALUES
+    (1, 'John Doe', '2001-05-10', 'M', '555-1234', '123 Main St'),
+    (2, 'Jane Smith', '2002-08-15', 'F', '555-5678', '456 Elm St'),
+    (3, 'Sam Wilson', '2003-11-20', 'M', '555-9876', '789 Oak St');
+
+INSERT INTO Faculty VALUES
+    (101, 'Dr. Alice Johnson', '555-2345', 'Computer Science'),
+    (102, 'Dr. Robert Brown', '555-3456', 'Mathematics'),
+    (103, 'Dr. Emily Davis', '555-4567', 'Physics');
+
+INSERT INTO Courses VALUES
+    (201, 'Database Systems', 3, 101),
+    (202, 'Calculus I', 4, 102),
+    (203, 'Classical Mechanics', 4, 103);
+
+INSERT INTO Enrollment VALUES
+    (301, 1, 201, 'Fall 2024'),
+    (302, 2, 202, 'Fall 2024'),
+    (303, 3, 203, 'Fall 2024'),
+    (304, 1, 202, 'Spring 2025');
+
+INSERT INTO Grades VALUES
+    (401, 301, 'A'),
+    (402, 302, 'B'),
+    (403, 303, 'A'),
+    (404, 304, 'B+');
+
+INSERT INTO Attendance VALUES
+    (501, 301, '2024-10-01', 'P'),
+    (502, 301, '2024-10-02', 'A'),
+    (503, 302, '2024-10-01', 'P'),
+    (504, 303, '2024-10-01', 'P');
+
+/*QUERIES*/
+# 1. Insert a new student:
+INSERT INTO Students VALUES (1, 'John Doe', '2001-05-10', 'M', '555-1234', '123 Main St');
+
+# 2. Retrieve all students enrolled in a specific course:
+SELECT S.Name, S.StudentID, E.Semester FROM Students S JOIN Enrollment E ON S.StudentID = E.StudentID WHERE E.CourseID = 101;
+
+# 3. Update a student’s contact information:
+UPDATE Students SET Contact = '555-5678' WHERE StudentID = 1;
+
+# 4. Calculate the average grade for a course:
+SELECT C.CourseName, AVG(CAST(Grade AS FLOAT)) AS AvgGrade FROM Grades G JOIN Enrollment E ON G.EnrollmentID = E.EnrollmentID JOIN Courses C ON E.CourseID = C.CourseID
+WHERE C.CourseID = 101 GROUP BY C.CourseName;
+
+# 5. Track attendance for a specific student in a course:
+SELECT A.Date, A.Status FROM Attendance A JOIN Enrollment E ON A.EnrollmentID = E.EnrollmentID WHERE E.StudentID = 1 AND E.CourseID = 101;
