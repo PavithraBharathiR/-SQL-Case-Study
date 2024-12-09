@@ -1,0 +1,132 @@
+# create a database "HospitalDB"
+CREATE DATABASE HospitalDB
+USE HospitalDB
+
+# create a table"Patients"
+CREATE TABLE Patients (
+    PatientID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Age INT,
+    Gender CHAR(1),
+    Contact VARCHAR(15),
+    Address TEXT,
+    MedicalHistory TEXT
+);
+
+# create a table"Doctors"
+CREATE TABLE Doctors (
+    DoctorID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Specialization VARCHAR(50),
+    Contact VARCHAR(15),
+    DepartmentID INT
+);
+
+# create a table"Departments"
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50)
+);
+
+# create a table"Appointments"
+CREATE TABLE Appointments (
+    AppointmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    AppointmentDate DATE,
+    AppointmentTime TIME
+);
+
+# create a table"Treatments"
+CREATE TABLE Treatments (
+    TreatmentID INT PRIMARY KEY,
+    PatientID INT,
+    DoctorID INT,
+    TreatmentDetails TEXT,
+    TreatmentDate DATE
+);
+
+# create a table"Billing"
+CREATE TABLE Billing (
+    BillingID INT PRIMARY KEY,
+    PatientID INT,
+    AppointmentID INT,
+    TreatmentCost DECIMAL(10, 2),
+    TotalAmount DECIMAL(10, 2)
+);
+
+# create a table"Medications"
+CREATE TABLE Medications (
+    MedicationID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Dosage VARCHAR(50),
+    Cost DECIMAL(10, 2)
+);
+
+# INSERTING VALUES IN TABLE
+
+INSERT INTO Departments VALUES
+    (1, 'Cardiology'),
+    (2, 'Orthopedics'),
+    (3, 'Neurology');
+
+INSERT INTO Doctors VALUES
+    (101, 'Dr. John Doe', 'Cardiologist', '555-1234', 1),
+    (102, 'Dr. Jane Smith', 'Orthopedic Surgeon', '555-5678', 2),
+    (103, 'Dr. Emily Davis', 'Neurologist', '555-8765', 3);
+
+INSERT INTO Patients VALUES
+    (201, 'Alice Brown', 45, 'F', '555-1111', '123 Main St', 'Hypertension'),
+    (202, 'Bob Martin', 60, 'M', '555-2222', '456 Elm St', 'Diabetes'),
+    (203, 'Charlie Lee', 35, 'M', '555-3333', '789 Oak St', 'Asthma');
+
+INSERT INTO Appointments VALUES
+    (301, 201, 101, '2024-12-10', '10:00:00'),
+    (302, 202, 102, '2024-12-11', '11:00:00'),
+    (303, 203, 103, '2024-12-12', '12:00:00');
+
+INSERT INTO Treatments VALUES
+    (401, 201, 101, 'Blood Pressure Monitoring and Medication', '2024-12-10'),
+    (402, 202, 102, 'Knee Surgery', '2024-12-11'),
+    (403, 203, 103, 'Migraine Therapy', '2024-12-12');
+
+INSERT INTO Billing VALUES
+    (501, 201, 301, 200.00, 250.00),
+    (502, 202, 302, 1500.00, 1550.00),
+    (503, 203, 303, 300.00, 350.00);
+
+INSERT INTO Medications VALUES
+    (1, 'Paracetamol', '500mg', 2.50),
+    (2, 'Ibuprofen', '200mg', 3.00),
+    (3, 'Amoxicillin', '250mg', 5.00),
+    (4, 'Cough Syrup', '10ml', 4.50),
+    (5, 'Aspirin', '75mg', 2.00),
+    (6, 'Metformin', '500mg', 6.00),
+    (7, 'Omeprazole', '20mg', 3.50),
+    (8, 'Losartan', '50mg', 5.50);
+
+# ADDING FOREIGN_KEYS USING ALTER QUERY
+ALTER TABLE Appointments ADD CONSTRAINT FK_Appointments_PatientID FOREIGN KEY (PatientID) REFERENCES Patients(PatientID);
+ALTER TABLE Appointments ADD CONSTRAINT FK_Appointments_DoctorID FOREIGN KEY (DoctorID) REFERENCES Doctors(DoctorID);
+ALTER TABLE Prescriptions ADD CONSTRAINT FK_Prescriptions_AppointmentID FOREIGN KEY (AppointmentID) REFERENCES Appointments(AppointmentID);
+ALTER TABLE Prescriptions ADD CONSTRAINT FK_Prescriptions_MedicationID FOREIGN KEY (MedicationID) REFERENCES Medications(MedicationID);
+
+/*QUERIES*/
+# 1. List all patients and their medical history:
+SELECT Name, Age, Gender, MedicalHistory FROM Patients;
+
+# 2. Retrieve all appointments for a specific doctor:
+SELECT A.AppointmentID, P.Name AS PatientName, A.AppointmentDate, A.AppointmentTime FROM Appointments A JOIN Patients P ON A.PatientID = P.PatientID WHERE A.DoctorID = 101;
+
+# 3. Find total revenue generated from treatments:
+SELECT SUM(TreatmentCost) AS TotalRevenue FROM Billing;
+
+# 4. List all doctors and their specializations:
+SELECT Name, Specialization, DepartmentName FROM Doctors D JOIN Departments Dep ON D.DepartmentID = Dep.DepartmentID;
+
+# 5. Show treatment details for a specific patient:
+SELECT T.TreatmentDetails, T.TreatmentDate, D.Name AS DoctorName FROM Treatments T JOIN Doctors D ON T.DoctorID = D.DoctorID WHERE T.PatientID = 201;
+
+# 6. List appointments by date:
+SELECT A.AppointmentID, P.Name AS PatientName, D.Name AS DoctorName, A.AppointmentDate, A.AppointmentTime FROM Appointments A JOIN Patients P ON A.PatientID = P.PatientID 
+JOIN Doctors D ON A.DoctorID = D.DoctorID ORDER BY A.AppointmentDate;
