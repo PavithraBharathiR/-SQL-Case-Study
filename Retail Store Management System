@@ -1,0 +1,107 @@
+# create a database "RetailDB"
+CREATE DATABASE RetailDB
+USE RetailDB
+
+# create a table "Products" 
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,
+    ProductName VARCHAR(100),
+    CategoryID INT,
+    QuantityInStock INT,
+    Price DECIMAL(10, 2),
+    SupplierID INT
+);
+
+# create a table "Categories"
+CREATE TABLE Categories (
+    CategoryID INT PRIMARY KEY,
+    CategoryName VARCHAR(100)
+);
+
+# create a table "Suppliers" 
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY,
+    SupplierName VARCHAR(100),
+    Contact VARCHAR(15),
+    Address TEXT
+);
+
+# create a table "Stock" 
+CREATE TABLE Stock (
+    StockID INT PRIMARY KEY,
+    ProductID INT,
+    RestockedDate DATE,
+    QuantityAdded INT
+  );
+
+# create a table "Customers" 
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Contact VARCHAR(15),
+    Address TEXT
+);
+
+# create a table "Sales" 
+CREATE TABLE Sales (
+    SaleID INT PRIMARY KEY,
+    CustomerID INT,
+    ProductID INT,
+    QuantitySold INT,
+    SaleDate DATE
+);
+
+# INSERTING TABLE VALUES
+INSERT INTO Categories VALUES
+    (1, 'Electronics'),
+    (2, 'Groceries'),
+    (3, 'Clothing');
+
+INSERT INTO Suppliers VALUES
+    (101, 'Tech Supplies Co.', '555-1234', '123 Tech Blvd'),
+    (102, 'Food Mart Distributors', '555-5678', '456 Market Rd'),
+    (103, 'Fashion Wholesalers', '555-8765', '789 Style Ave');
+
+INSERT INTO Products VALUES
+    (201, 'Smartphone', 1, 50, 699.99, 101),
+    (202, 'Laptop', 1, 30, 999.99, 101),
+    (203, 'Rice Bag (5kg)', 2, 100, 10.99, 102),
+    (204, 'T-Shirt', 3, 75, 19.99, 103);
+
+INSERT INTO Customers VALUES
+    (301, 'John Doe', '555-1234', '123 Main St'),
+    (302, 'Jane Smith', '555-5678', '456 Elm St');
+
+INSERT INTO Stock VALUES
+    (401, 201, '2024-01-01', 50),
+    (402, 202, '2024-01-15', 30),
+    (403, 203, '2024-02-01', 100);
+
+INSERT INTO Sales VALUES
+    (501, 301, 201, 1, '2024-02-10'),
+    (502, 302, 203, 2, '2024-02-11'),
+    (503, 301, 204, 3, '2024-02-12');
+
+# ADD FOREIGN_KEY USING ALTER TABLE
+ALTER TABLE Products ADD CONSTRAINT FK_Products_Categories FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID);
+ALTER TABLE Products ADD CONSTRAINT FK_Products_Suppliers FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID);
+ALTER TABLE Stock ADD CONSTRAINT FK_Stock_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID);
+ALTER TABLE Sales ADD CONSTRAINT FK_Sales_Customers FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);
+ALTER TABLE Sales ADD CONSTRAINT FK_Sales_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID);
+
+
+/*QUERIES*/
+# 1. List all products and their stock levels:
+SELECT ProductName, QuantityInStock FROM Products;
+
+# 2. Find all customers who purchased a specific product:
+SELECT C.Name, C.Contact, S.QuantitySold, S.SaleDate FROM Customers C JOIN Sales S ON C.CustomerID = S.CustomerID WHERE S.ProductID = 201;
+
+# 3. Calculate total revenue generated from a specific product:
+SELECT P.ProductName, SUM(S.QuantitySold * P.Price) AS TotalRevenue FROM Sales S JOIN Products P ON S.ProductID = P.ProductID WHERE P.ProductID = 201 GROUP BY P.ProductName;
+
+# 4. Retrieve all sales made within a specific date range:
+SELECT S.SaleID, C.Name AS CustomerName, P.ProductName, S.QuantitySold, S.SaleDate FROM Sales S JOIN Customers C ON S.CustomerID = C.CustomerID JOIN Products P ON S.ProductID = P.ProductID WHERE S.SaleDate BETWEEN '2024-02-01' AND '2024-02-15';
+
+# 5. List suppliers who supply products in the "Electronics" category: 
+SELECT DISTINCT Sup.SupplierName, Sup.Contact FROM Suppliers Sup JOIN Products Prod ON Sup.SupplierID = Prod.SupplierID JOIN Categories Cat ON Prod.CategoryID = Cat.CategoryID WHERE Cat.CategoryName = 'Electronics';
