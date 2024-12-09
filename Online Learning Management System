@@ -1,0 +1,134 @@
+# create a database "OnlinelearningDB"
+CREATE DATABASE OnlinelearningDB
+USE OnlinelearningDB
+
+# create a table "Users"
+CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Email VARCHAR(100) UNIQUE,
+    Role ENUM('Student', 'Instructor'),
+    DateOfRegistration DATE
+);
+
+# create a table "Courses"
+CREATE TABLE Courses (
+    CourseID INT PRIMARY KEY,
+    Title VARCHAR(100),
+    Description TEXT,
+    Duration INT, 
+    InstructorID INT,
+    FOREIGN KEY (InstructorID) REFERENCES Users(UserID)
+);
+
+# create a table "Enrollments"
+CREATE TABLE Enrollments (
+    EnrollmentID INT PRIMARY KEY,
+    UserID INT,
+    CourseID INT,
+    EnrollmentDate DATE,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+# create a table "CourseMaterials"
+CREATE TABLE CourseMaterials (
+    MaterialID INT PRIMARY KEY,
+    CourseID INT,
+    Title VARCHAR(100),
+    Type ENUM('Video', 'PDF', 'Quiz'),
+    UploadDate DATE,
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+# create a table "Assignments"
+CREATE TABLE Assignments (
+    AssignmentID INT PRIMARY KEY,
+    CourseID INT,
+    Title VARCHAR(100),
+    Description TEXT,
+    DueDate DATE,
+    MaxMarks INT,
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+# create a table "Submissions"
+CREATE TABLE Submissions (
+    SubmissionID INT PRIMARY KEY,
+    AssignmentID INT,
+    UserID INT,
+    SubmissionDate DATE,
+    ObtainedMarks INT,
+    FOREIGN KEY (AssignmentID) REFERENCES Assignments(AssignmentID),
+    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+);
+
+# create a table "Grades"
+CREATE TABLE Grades (
+    GradeID INT PRIMARY KEY,
+    UserID INT,
+    CourseID INT,
+    FinalGrade CHAR(2),
+    CompletionDate DATE,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+);
+
+# INSERT VALUES IN TABLES
+
+INSERT INTO Users VALUES
+    (1, 'Alice Smith', 'alice@example.com', 'Student', '2024-01-01'),
+    (2, 'Bob Johnson', 'bob@example.com', 'Instructor', '2024-01-05'),
+    (3, 'Charlie Brown', 'charlie@example.com', 'Student', '2024-01-10');
+
+INSERT INTO Courses VALUES
+    (101, 'Introduction to Python', 'Learn the basics of Python programming.', 6, 2),
+    (102, 'Data Science Fundamentals', 'An introduction to data science concepts.', 8, 2);
+
+INSERT INTO Enrollments VALUES
+    (201, 1, 101, '2024-01-15'),
+    (202, 3, 101, '2024-01-16'),
+    (203, 1, 102, '2024-01-20');
+
+INSERT INTO CourseMaterials VALUES
+    (301, 101, 'Python Basics Video', 'Video', '2024-01-17'),
+    (302, 101, 'Python Basics Notes', 'PDF', '2024-01-18');
+
+INSERT INTO Assignments VALUES
+    (401, 101, 'Python Assignment 1', 'Write a Python program.', '2024-01-25', 100);
+
+INSERT INTO Submissions VALUES
+    (501, 401, 1, '2024-01-24', 95),
+    (502, 401, 3, '2024-01-24', 88);
+
+INSERT INTO Grades VALUES
+    (601, 1, 101, 'A', '2024-02-20'),
+    (602, 3, 101, 'B', '2024-02-20');
+
+# ADDING FOREIGN_KEY USING ALTER
+ALTER TABLE Courses ADD CONSTRAINT fk_courses_categories FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID);
+ALTER TABLE Courses ADD CONSTRAINT fk_courses_users FOREIGN KEY (InstructorID) REFERENCES Users(UserID);
+ALTER TABLE Content ADD CONSTRAINT fk_content_courses FOREIGN KEY (CourseID) REFERENCES Courses(CourseID);
+ALTER TABLE Enrollments ADD CONSTRAINT fk_enrollments_users FOREIGN KEY (UserID) REFERENCES Users(UserID);
+ALTER TABLE Enrollments ADD CONSTRAINT fk_enrollments_courses FOREIGN KEY (CourseID) REFERENCES Courses(CourseID);
+ALTER TABLE Assessments ADD CONSTRAINT fk_assessments_courses FOREIGN KEY (CourseID) REFERENCES Courses(CourseID);
+ALTER TABLE Submissions ADD CONSTRAINT fk_submissions_users FOREIGN KEY (UserID) REFERENCES Users(UserID);
+ALTER TABLE Submissions ADD CONSTRAINT fk_submissions_assessments FOREIGN KEY (AssessmentID) REFERENCES Assessments(AssessmentID);
+
+
+/*QUERIES*/
+
+# 1. List all students enrolled in a course:
+SELECT U.Name AS StudentName, U.Email FROM Users U JOIN Enrollments E ON U.UserID = E.UserID WHERE E.CourseID = 101 AND U.Role = 'Student';
+
+# 2. Retrieve all courses taught by a specific instructor:
+SELECT C.Title, C.Description, C.Duration FROM Courses C JOIN Users U ON C.InstructorID = U.UserID WHERE U.Name = 'Bob Johnson';
+
+# 3. Calculate the average grade for a course:
+SELECT AVG(ObtainedMarks) AS AverageMarks FROM Submissions S JOIN Assignments A ON S.AssignmentID = A.AssignmentID WHERE A.CourseID = 101;
+
+# 4. List all materials for a course:
+SELECT CM.Title, CM.Type, CM.UploadDate FROM CourseMaterials CM WHERE CM.CourseID = 101;
+
+# 5. Count total enrollments for each course:
+SELECT C.Title AS CourseTitle, COUNT(E.UserID) AS TotalEnrollments FROM Courses C JOIN Enrollments E ON C.CourseID = E.CourseID GROUP BY C.CourseID, C.Title;
