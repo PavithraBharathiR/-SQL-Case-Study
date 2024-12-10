@@ -17,8 +17,7 @@ CREATE TABLE Courses (
     Title VARCHAR(100),
     Description TEXT,
     Duration INT, 
-    InstructorID INT,
-    FOREIGN KEY (InstructorID) REFERENCES Users(UserID)
+    InstructorID INT
 );
 
 # create a table "Enrollments"
@@ -26,9 +25,7 @@ CREATE TABLE Enrollments (
     EnrollmentID INT PRIMARY KEY,
     UserID INT,
     CourseID INT,
-    EnrollmentDate DATE,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+    EnrollmentDate DATE
 );
 
 # create a table "CourseMaterials"
@@ -37,8 +34,7 @@ CREATE TABLE CourseMaterials (
     CourseID INT,
     Title VARCHAR(100),
     Type ENUM('Video', 'PDF', 'Quiz'),
-    UploadDate DATE,
-    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+    UploadDate DATE
 );
 
 # create a table "Assignments"
@@ -48,8 +44,7 @@ CREATE TABLE Assignments (
     Title VARCHAR(100),
     Description TEXT,
     DueDate DATE,
-    MaxMarks INT,
-    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+    MaxMarks INT
 );
 
 # create a table "Submissions"
@@ -58,9 +53,7 @@ CREATE TABLE Submissions (
     AssignmentID INT,
     UserID INT,
     SubmissionDate DATE,
-    ObtainedMarks INT,
-    FOREIGN KEY (AssignmentID) REFERENCES Assignments(AssignmentID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    ObtainedMarks INT
 );
 
 # create a table "Grades"
@@ -69,9 +62,7 @@ CREATE TABLE Grades (
     UserID INT,
     CourseID INT,
     FinalGrade CHAR(2),
-    CompletionDate DATE,
-    FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+    CompletionDate DATE
 );
 
 # INSERT VALUES IN TABLES
