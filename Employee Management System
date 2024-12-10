@@ -137,5 +137,3 @@ SELECT E.Name, PA.Role
 FROM Employees E
 JOIN ProjectAssignments PA ON E.EmployeeID = PA.EmployeeID
 WHERE PA.ProjectID = 401;
-
-
