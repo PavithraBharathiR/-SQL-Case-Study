@@ -30,8 +30,6 @@ book_id int,member_id int,
 borrow_date DATE not null,
 return_date DATE
 );
-Alter table borrowing add constraint BOOK foreign key (book_id) references books(id);
-Alter table borrowing add constraint members foreign key(member_id) references members(id);
 DESC borrowing;
 SHOW TABLES;
 
@@ -77,6 +75,11 @@ INSERT INTO borrowing VALUES
 (8, 9, '2023-11-25', '2023-12-05'),
 (10, 10, '2023-11-28', NULL);
 SELECT * FROM borrowing;
+
+# ADDING FOREIGN_KEY USING ALTER
+Alter table borrowing add constraint BOOK foreign key (book_id) references books(id);
+Alter table borrowing add constraint members foreign key(member_id) references members(id);
+
 
 /*Queries*/
 # 1. Retrieve the book title,genre of all available books.
