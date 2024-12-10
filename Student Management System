@@ -25,8 +25,7 @@ CREATE TABLE Courses (
     CourseID INT PRIMARY KEY,
     CourseName VARCHAR(100),
     CreditHours INT,
-    FacultyID INT,
-    FOREIGN KEY (FacultyID) REFERENCES Faculty(FacultyID)
+    FacultyID INT
 );
 
 # Create a Table "Enrollment"
@@ -34,17 +33,14 @@ CREATE TABLE Enrollment (
     EnrollmentID INT PRIMARY KEY,
     StudentID INT,
     CourseID INT,
-    Semester VARCHAR(20),
-    FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
-    FOREIGN KEY (CourseID) REFERENCES Courses(CourseID)
+    Semester VARCHAR(20)
 );
 
 # Create a Table "Grades"
 CREATE TABLE Grades (
     GradeID INT PRIMARY KEY,
     EnrollmentID INT,
-    Grade VARCHAR(2),
-    FOREIGN KEY (EnrollmentID) REFERENCES Enrollment(EnrollmentID)
+    Grade VARCHAR(2)
 );
 
 # Create a Table "Attendance"
@@ -52,8 +48,7 @@ CREATE TABLE Attendance (
     AttendanceID INT PRIMARY KEY,
     EnrollmentID INT,
     Date DATE,
-    Status CHAR(1), -- P (Present), A (Absent)
-    FOREIGN KEY (EnrollmentID) REFERENCES Enrollment(EnrollmentID)
+    Status CHAR(1)
 );
 
 #INSERTING TABLE VALUES
@@ -89,6 +84,17 @@ INSERT INTO Attendance VALUES
     (502, 301, '2024-10-02', 'A'),
     (503, 302, '2024-10-01', 'P'),
     (504, 303, '2024-10-01', 'P');
+
+
+# ADDING FOREIGN_USING ALTER
+ALTER TABLE Enrollment ADD CONSTRAINT FK_Enrollment_Student FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Enrollment ADD CONSTRAINT FK_Enrollment_Course FOREIGN KEY (course_id) REFERENCES Course(course_id); 
+ALTER TABLE Enrollment ADD CONSTRAINT FK_Enrollment_Faculty FOREIGN KEY (faculty_id) REFERENCES Faculty(faculty_id);
+ALTER TABLE Grade ADD CONSTRAINT FK_Grade_Student FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Grade ADD CONSTRAINT FK_Grade_Course FOREIGN KEY (course_id) REFERENCES Course(course_id);
+ALTER TABLE Attendance ADD CONSTRAINT FK_Attendance_Student FOREIGN KEY (student_id) REFERENCES Student(student_id);
+ALTER TABLE Attendance ADD CONSTRAINT FK_Attendance_Course FOREIGN KEY (course_id) REFERENCES Course(course_id);
+
 
 /*QUERIES*/
 # 1. Insert a new student:
