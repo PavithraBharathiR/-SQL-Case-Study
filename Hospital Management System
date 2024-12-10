@@ -1,4 +1,4 @@
-# create a database "HospitalDB"
+# create  database "HospitalDB"
 CREATE DATABASE HospitalDB
 USE HospitalDB
 
