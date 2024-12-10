@@ -12,17 +12,14 @@ CREATE TABLE Employees (
     Address TEXT,
     JobRoleID INT,
     DepartmentID INT,
-    JoiningDate DATE,
-    FOREIGN KEY (JobRoleID) REFERENCES JobRoles(JobRoleID),
-    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID)
+    JoiningDate DATE
 );
 
 # create a table"Departments"
 CREATE TABLE Departments (
     DepartmentID INT PRIMARY KEY,
     DepartmentName VARCHAR(100),
-    ManagerID INT,
-    FOREIGN KEY (ManagerID) REFERENCES Employees(EmployeeID)
+    ManagerID INT
 );
 
 # create a table"JobRoles"
@@ -37,8 +34,7 @@ CREATE TABLE Salaries (
     SalaryID INT PRIMARY KEY,
     EmployeeID INT,
     BasePay DECIMAL(10, 2),
-    Allowances DECIMAL(10, 2),
-    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+    Allowances DECIMAL(10, 2)
 );
 
 # create a table"Projects"
@@ -55,9 +51,7 @@ CREATE TABLE ProjectAssignments (
     AssignmentID INT PRIMARY KEY,
     EmployeeID INT,
     ProjectID INT,
-    Role VARCHAR(50),
-    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID),
-    FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID)
+    Role VARCHAR(50)
 );
 
 # create a table"PerformanceReviews"
@@ -65,8 +59,7 @@ CREATE TABLE PerformanceReviews (
     ReviewID INT PRIMARY KEY,
     EmployeeID INT,
     ReviewDate DATE,
-    Rating INT,
-    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+    Rating INT
 );
 
 # create a table"Attendance"
@@ -74,8 +67,7 @@ CREATE TABLE Attendance (
     AttendanceID INT PRIMARY KEY,
     EmployeeID INT,
     Date DATE,
-    Status CHAR(1), -- P (Present), A (Absent)
-    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+    Status CHAR(1)
 );
 
 #INSERT VALUES
@@ -117,6 +109,18 @@ INSERT INTO Attendance VALUES
     (701, 1, '2024-12-01', 'P'),
     (702, 2, '2024-12-01', 'A'),
     (703, 3, '2024-12-01', 'P');
+
+
+# ADDING FOREIGN_KEY USING ALTER
+ALTER TABLE Employees ADD CONSTRAINT FK_Employees_JobRoles FOREIGN KEY (JobRoleID) REFERENCES JobRoles(JobRoleID);
+ALTER TABLE Employees ADD CONSTRAINT FK_Employees_Departments FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID);
+ALTER TABLE Departments ADD CONSTRAINT FK_Departments_Employees FOREIGN KEY (ManagerID) REFERENCES Employees(EmployeeID);
+ALTER TABLE Salaries ADD CONSTRAINT FK_Salaries_Employees FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID);
+ALTER TABLE ProjectAssignments ADD CONSTRAINT FK_ProjectAssignments_Employees FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID);
+ALTER TABLE ProjectAssignments ADD CONSTRAINT FK_ProjectAssignments_Projects FOREIGN KEY (ProjectID) REFERENCES Projects(ProjectID);
+ALTER TABLE PerformanceReviews ADD CONSTRAINT FK_PerformanceReviews_Employees FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID);
+ALTER TABLE Attendance ADD CONSTRAINT FK_Attendance_Employees FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID);
+
 
 /*QUERIES*/
 
