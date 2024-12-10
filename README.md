@@ -42,7 +42,8 @@ This repository contains a collection of database management system (DBMS) proje
 ## ⚙️ Setup Instructions
 1. Clone the repository:
    ```bash
-   git clone https://github.com/PavithraBharathiR/repo-name.git
+   git clone https://github.com/PavithraBharathiR/-SQL-Case-Study.git
+   
 2. Navigate to the desired project folder.
 3. Run the create_tables.sql file in your MySQL environment to set up the tables.
 4. Execute the insert_values.sql file to populate the tables with sample data.
