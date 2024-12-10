@@ -1,4 +1,4 @@
-# create a database "RetailDB"
+# create database "RetailDB"
 CREATE DATABASE RetailDB
 USE RetailDB
 
@@ -88,7 +88,6 @@ ALTER TABLE Products ADD CONSTRAINT FK_Products_Suppliers FOREIGN KEY (SupplierI
 ALTER TABLE Stock ADD CONSTRAINT FK_Stock_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID);
 ALTER TABLE Sales ADD CONSTRAINT FK_Sales_Customers FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);
 ALTER TABLE Sales ADD CONSTRAINT FK_Sales_Products FOREIGN KEY (ProductID) REFERENCES Products(ProductID);
-
 
 /*QUERIES*/
 # 1. List all products and their stock levels:
