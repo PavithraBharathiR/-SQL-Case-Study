@@ -90,5 +90,3 @@ SELECT books.Title AS Book_Title,members.Member_Names AS Borrowed_By FROM borrow
 
 # 4. Display the total count of books in each category.
 SELECT Genre,COUNT(*) AS Total_Books FROM books GROUP BY Genre;
-
-# 5. 
